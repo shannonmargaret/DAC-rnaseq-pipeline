@@ -20,23 +20,40 @@ R-code used to perform downstream exploratory data analysis and gene-level diffe
 ## Implementation
 The pipeline uses R-scripts to generate and submit jobs to the scheduler, and requires several variables to be defined by the user when running the pipeline: 
 
-* **Lab** - The name of the lab, or relevant project (used for file naming)
+**Function arguments**
+DAC_RNAseq_process (Lab, FastqRaw, SamNames, SeqMethod, AlignInd, AlignRef, PicardInt, PicardRef, QuantRef, CondaEnv, OutputFolder)   
+
+* **Lab** - The name of the lab, or relevant project (used for file naming).
 * **FastqRaw** - The absolute path to raw FASTQ files.
 * **SamNames** - a vector of sample names (e.g. SamName <- c("SamName1", "SamName2", etc.)) that make up the prefixes of FASTQ file (e.g. 'SamName1' for 'SamName1_R1_001.fastq.gz'.
 * **SeqMethod** - Either "fullLength" for assays profiling full transcripts or "3Prime" for 3'-end profiling assays. 
 * **AlignInd** - Absolute path to the STAR index to be used as the reference genome. 
-* **AlignRef** - Absolute path to the genome annotation (.gtffile ) to be used during alignment (to determine splice-site coordinates)
+* **AlignRef** - Absolute path to the genome annotation (.gtffile ) to be used during alignment (to determine splice-site coordinates).
 This is the reference that you would like to use during the alignment step, please give an absolute path (*.gtf).
-* **PicardInt** - Absolute path to coordinates of ribosomal RNA sequences in reference genome, in [interval-list format](https://gatk.broadinstitute.org/hc/en-us/articles/360035531852-Intervals-and-interval-lists)
-* **PicardRef** - Absolute path to genome annotation in [RefFlat format](https://gatk.broadinstitute.org/hc/en-us/articles/360040509431-CollectRnaSeqMetrics-Picard-)
-* **QuantRef** - Absolute path to genome annotation file (.gtf) 
+* **PicardInt** - Absolute path to coordinates of ribosomal RNA sequences in reference genome, in [interval-list format](https://gatk.broadinstitute.org/hc/en-us/articles/360035531852-Intervals-and-interval-lists).
+* **PicardRef** - Absolute path to genome annotation in [RefFlat format](https://gatk.broadinstitute.org/hc/en-us/articles/360040509431-CollectRnaSeqMetrics-Picard-).
+* **QuantRef** - Absolute path to genome annotation file (.gtf). 
 * **CondaEnv**- This is the environment that includes all of the dependencies needed to run this pipeline, the yml file to create this environment is included in this directory (environment.yml).
-* **OutputFolder** - Absolute path to directory for pipeline outputs. You shoudl create the following outputs in this directory:
-tmp/
-fastqc/
-trim/
-alignment/
-rawcounts/
+* **OutputFolder** - Absolute path to directory for pipeline outputs.
+
+**Argument definitions for example function call below**
+* **Lab** <- SomeLab
+* **FastqRaw** <- RNAseq_2-13-20/
+* **SamNames** <- c("1_S1","2_S3","3_S5","4_S7","5_S")
+* **SeqMethod** <- fullSized
+* **AlignInd** <- genomic_references/human/STAR/hg38_index
+* **AlignRef** <- genomic_references/human/ensembl-annotations/Homo_sapiens.GRCh38.97.gtf
+* **PicardInt** <- genomic_references/human/CollectRnaSeqMetrics/Homo_sapiens.GRCh38.97.rRNA.interval_list
+* **PicardRef** <- genomic_references/human/CollectRnaSeqMetrics/Homo_sapiens.GRCh38.97.refFlat.txt
+* **QunatRef** <- genomic_references/human/RSEM/txdir/RSEMref
+* **CondaEnv** <- conda activate conda_envs/rnaseq1
+* **OutputFolder** <- ./
+
+**Example function call from within an R terminal**   
+source("rnaseq-pipeline.R")
+
+DAC_RNAseq_process("SomeLab", "RNAseq_2-13-20/", c("1_S1","2_S3","3_S5","4_S7","5_S"), "fullSized", "genomic_references/human/STAR/hg38_index", "genomic_references/human/ensembl-annotations/Homo_sapiens.GRCh38.97.gtf", "genomic_references/human/CollectRnaSeqMetrics/Homo_sapiens.GRCh38.97.rRNA.interval_list", "genomic_references/human/CollectRnaSeqMetrics/Homo_sapiens.GRCh38.97.refFlat.txt", "genomic_references/human/RSEM/txdir/RSEMref", "conda activate conda_envs/rnaseq1", "./")
+
 
 > **Contact & questions:** 
 > Please address questions to *DataAnalyticsCore@groups.dartmouth.edu* or generate a issue in the GitHub repository. 
